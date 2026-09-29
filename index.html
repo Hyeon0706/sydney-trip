@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>시드니 4박 5일 · 2026.10.22 – 10.26</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
 <style>
   :root{
     --ink:#0b1b2b; --sea:#0a6ea8; --sea2:#11a3c9; --sand:#f6efe4; --sun:#ff8a3d;
@@ -63,6 +65,28 @@
   .tl .n{font-weight:800;font-size:17px}
   .tl .d{color:var(--muted);font-size:15px}
   .badge{display:inline-block;font-size:11px;font-weight:800;background:var(--sun);color:#fff;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+  .tl li.pin{cursor:pointer}
+  .tl li.pin:hover .n{color:var(--sea)}
+  .tl li.here::before{box-shadow:0 0 0 4px rgba(10,110,168,.25)}
+  .tl .n .no{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--sea);color:#fff;
+    font-size:11px;font-weight:900;margin-right:6px;vertical-align:2px}
+  .tl li.star .n .no{background:var(--sun)}
+
+  /* map */
+  #map{height:380px;border-radius:16px;overflow:hidden;margin-bottom:8px;background:#dfeaf1;border:1px solid var(--line)}
+  @media(max-width:700px){#map{height:280px}}
+  .map-hint{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .mk{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--sea);border:2px solid #fff;
+    box-shadow:0 3px 8px rgba(11,27,43,.35);display:grid;place-items:center;transition:all .25s}
+  .mk b{transform:rotate(45deg);color:#fff;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums}
+  .mk.star{background:var(--sun)}
+  .mk.dim{background:#aab6c2;opacity:.55;box-shadow:none;transform:rotate(-45deg) scale(.8)}
+  .leaflet-container{font-family:inherit;font-size:14px}
+  .leaflet-popup-content-wrapper{border-radius:12px;box-shadow:0 10px 30px rgba(11,27,43,.18)}
+  .leaflet-popup-content{margin:12px 16px;line-height:1.45}
+  .leaflet-popup-content .pt{font-size:12px;font-weight:800;color:var(--sea)}
+  .leaflet-popup-content .pn{font-weight:900;font-size:15px}
+  .leaflet-popup-content .pd{font-size:13px;color:var(--muted);margin-top:2px}
 
   /* highlight */
   .hl{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -144,6 +168,8 @@
   <section class="card">
     <h2>일정표</h2>
     <div class="tabs" id="tabs"></div>
+    <div id="map" aria-label="일정 장소 지도"></div>
+    <div class="map-hint" id="map-hint">마커를 누르면 장소 정보가, 일정 항목을 누르면 지도가 그 장소로 이동합니다.</div>
     <div id="day"></div>
   </section>
 
@@ -172,23 +198,6 @@
   </section>
 
   <section class="card">
-    <h2>예상 경비 <span class="tag">1인 기준</span></h2>
-    <table>
-      <thead><tr><th>항목</th><th>알뜰</th><th class="col-mid">보통</th><th>여유</th></tr></thead>
-      <tbody>
-        <tr><td>항공권 (왕복)</td><td>85만</td><td class="col-mid">85만</td><td>85만</td></tr>
-        <tr><td>숙박 (3박)</td><td>44만</td><td class="col-mid">73만</td><td>110만</td></tr>
-        <tr><td>식비</td><td>21만</td><td class="col-mid">34만</td><td>53만</td></tr>
-        <tr><td>교통</td><td>8만</td><td class="col-mid">9만</td><td>12만</td></tr>
-        <tr><td>입장료·투어</td><td>3만</td><td class="col-mid">10만</td><td>19만</td></tr>
-        <tr><td>ETA·보험 등</td><td>5만</td><td class="col-mid">5만</td><td>5만</td></tr>
-      </tbody>
-      <tfoot><tr><td>합계</td><td>약 166만</td><td class="col-mid">약 216만</td><td>약 284만</td></tr></tfoot>
-    </table>
-    <p class="note">A$1 ≈ 970원 기준 추정치. 숙박·식비는 실제 예약가에 따라 달라질 수 있어요.</p>
-  </section>
-
-  <section class="card">
     <h2>출발 전 체크리스트</h2>
     <div class="progress"><i id="bar"></i></div>
     <ul class="check" id="check"></ul>
@@ -198,45 +207,101 @@
 <footer>Have a great trip to Sydney 🌊</footer>
 
 <script>
+// 장소 좌표 [위도, 경도]. 호텔은 예약 뒤 추가.
+const P = {
+  airport:[-33.9361,151.1661], bondi:[-33.8908,151.2743], icebergs:[-33.8946,151.2745],
+  tamarama:[-33.9003,151.2700], quay:[-33.8614,151.2108], opera:[-33.8568,151.2153],
+  botanic:[-33.8590,151.2226], rocks:[-33.8593,151.2087], bridge:[-33.8523,151.2108],
+  darling:[-33.8737,151.2010], central:[-33.8832,151.2065], echo:[-33.7320,150.3120],
+  katoomba:[-33.7118,150.3120], leura:[-33.7150,150.3310], surry:[-33.8850,151.2120], newtown:[-33.8975,151.1793]
+};
+// stops: {t:시간, n:이름, d:설명, star:하이라이트, ll:좌표(없으면 지도에 표시 안 함)}
 const days = [
   { tab:"목 10/22", title:"출발", sub:"인천 22:00 출발, 기내에서 푹 자기",
-    stops:[["22:00","인천공항 출발","밤 비행기, 도착까지 약 10시간"]]},
+    stops:[{t:"22:00", n:"인천공항 출발", d:"밤 비행기, 도착까지 약 10시간"}]},
   { tab:"금 10/23", title:"본다이 데이", sub:"도착하자마자 바다로. 평일이라 한산해요.",
     stops:[
-      ["아침","시드니 공항 도착","기차로 시내 이동, 호텔에 짐 맡기기 (수영복만 챙기기)"],
-      ["점심","본다이 비치 이동 & 점심","T4 기차로 본다이 정션 → 버스, 해변 카페에서 점심"],
-      ["13:00–15:00","본다이 아이스버그 수영장","수영 후 사우나로 몸 녹이기",true],
-      ["15:00–17:00","조각 전시 해안 산책로","본다이 → 타마라마 전시 구간, 브론테까지 이어 걷기",true],
-      ["저녁","시내 복귀, 체크인 & 휴식","가볍게 저녁 먹고 일찍 쉬기"]]},
+      {t:"아침", n:"시드니 공항 도착", d:"기차로 시내 이동, 호텔에 짐 맡기기 (수영복만 챙기기)", ll:P.airport},
+      {t:"점심", n:"본다이 비치 이동 & 점심", d:"T4 기차로 본다이 정션 → 버스, 해변 카페에서 점심", ll:P.bondi},
+      {t:"13:00–15:00", n:"본다이 아이스버그 수영장", d:"수영 후 사우나로 몸 녹이기", star:true, ll:P.icebergs},
+      {t:"15:00–17:00", n:"조각 전시 해안 산책로", d:"본다이 → 타마라마 전시 구간, 브론테까지 이어 걷기", star:true, ll:P.tamarama},
+      {t:"저녁", n:"시내 복귀, 체크인 & 휴식", d:"가볍게 저녁 먹고 일찍 쉬기"}]},
   { tab:"토 10/24", title:"하버 데이", sub:"시드니의 상징들을 한 번에.",
     stops:[
-      ["오전","서큘러 키 & 오페라하우스","항구 산책, 원하면 가이드 투어"],
-      ["오전","로열 보타닉 가든","미세스 맥쿼리스 체어에서 오페라하우스 + 하버브리지 한 컷"],
-      ["점심","더 록스","주말 마켓 구경하며 점심"],
-      ["오후","하버브리지 걷기","다리 위에서 오페라하우스 전망"],
-      ["저녁","달링하버","저녁 식사와 야경"]]},
+      {t:"오전", n:"서큘러 키 & 오페라하우스", d:"항구 산책, 원하면 가이드 투어", ll:P.opera},
+      {t:"오전", n:"로열 보타닉 가든", d:"미세스 맥쿼리스 체어에서 오페라하우스 + 하버브리지 한 컷", ll:P.botanic},
+      {t:"점심", n:"더 록스", d:"주말 마켓 구경하며 점심", ll:P.rocks},
+      {t:"오후", n:"하버브리지 걷기", d:"다리 위에서 오페라하우스 전망", ll:P.bridge},
+      {t:"저녁", n:"달링하버", d:"저녁 식사와 야경", ll:P.darling}]},
   { tab:"일 10/25", title:"블루마운틴", sub:"일요일은 대중교통 요금 상한이 낮아 기차비가 저렴해요.",
     stops:[
-      ["아침","블루마운틴 당일치기","센트럴역에서 기차 약 2시간, 에코 포인트의 세 자매봉"],
-      ["오후","카툼바 & 루라 마을","짧은 트레킹, 카페 구경 후 기차로 복귀"],
-      ["저녁","서리 힐스 / 뉴타운","시드니 맛집 동네에서 마지막 저녁"]]},
+      {t:"아침", n:"센트럴역 출발", d:"블루마운틴선 기차 약 2시간", ll:P.central},
+      {t:"오전", n:"에코 포인트 · 세 자매봉", d:"카툼바역에서 버스 또는 도보 30분", ll:P.echo},
+      {t:"오후", n:"카툼바 & 루라 마을", d:"짧은 트레킹, 카페 구경 후 기차로 복귀", ll:P.leura},
+      {t:"저녁", n:"서리 힐스 / 뉴타운", d:"시드니 맛집 동네에서 마지막 저녁", ll:P.surry}]},
   { tab:"월 10/26", title:"귀국", sub:"정오 비행기, 아침은 여유 있게.",
     stops:[
-      ["07:00–08:00","동네 카페에서 아침","플랫화이트 한 잔으로 마무리"],
-      ["09:00","공항 이동","늦어도 9시 반엔 공항 도착"],
-      ["12:00","시드니 출발","안녕, 시드니!"]]}
+      {t:"07:00–08:00", n:"동네 카페에서 아침", d:"플랫화이트 한 잔으로 마무리"},
+      {t:"09:00", n:"공항 이동", d:"늦어도 9시 반엔 공항 도착", ll:P.airport},
+      {t:"12:00", n:"시드니 출발", d:"안녕, 시드니!"}]}
 ];
+// 지도에 찍을 순번: 좌표 있는 항목만 그 날 안에서 1,2,3…
+days.forEach(d=>{let k=0; d.stops.forEach(s=>{ if(s.ll) s.no=++k; });});
+
 const tabs = document.getElementById("tabs"), day = document.getElementById("day");
+let cur = 1, map = null, markers = [];   // markers[i] = [{s, m}] (day i)
+
 function show(i){
+  cur = i;
   [...tabs.children].forEach((b,j)=>b.classList.toggle("on",i===j));
   const d = days[i];
   day.innerHTML = `<div class="day-title">${d.title}</div><div class="day-sub">${d.sub}</div>
-    <ul class="tl">${d.stops.map((s,k)=>`<li class="${s[3]?'star':''}" style="animation-delay:${k*70}ms">
-      <div class="t">${s[0]}</div><div class="n">${s[1]}${s[3]?'<span class="badge">하이라이트</span>':''}</div>
-      <div class="d">${s[2]}</div></li>`).join("")}</ul>`;
+    <ul class="tl">${d.stops.map((s,k)=>`<li data-k="${k}" class="${s.star?'star':''} ${s.ll?'pin':''}" style="animation-delay:${k*70}ms">
+      <div class="t">${s.t}</div><div class="n">${s.ll?`<span class="no">${s.no}</span>`:''}${s.n}${s.star?'<span class="badge">하이라이트</span>':''}</div>
+      <div class="d">${s.d}</div></li>`).join("")}</ul>`;
+  focusDay(i);
 }
+day.onclick = e=>{
+  const li = e.target.closest("li.pin"); if(!li || !map) return;
+  const s = days[cur].stops[+li.dataset.k];
+  [...day.querySelectorAll("li")].forEach(x=>x.classList.toggle("here", x===li));
+  map.flyTo(s.ll, Math.max(map.getZoom(), 14), {duration:.6});
+  const rec = markers[cur].find(r=>r.s===s); if(rec) rec.m.openPopup();
+};
 days.forEach((d,i)=>{const b=document.createElement("button");b.className="tab";b.textContent=d.tab;b.onclick=()=>show(i);tabs.appendChild(b);});
-show(1);
+
+function icon(s, dim){
+  return L.divIcon({className:"", iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-26],
+    html:`<div class="mk ${s.star?'star':''} ${dim?'dim':''}"><b>${s.no}</b></div>`});
+}
+function focusDay(i){
+  if(!map) return;
+  markers.forEach((list,j)=>list.forEach(r=>{ r.m.setIcon(icon(r.s, j!==i)); r.m.setZIndexOffset(j===i?1000:0); }));
+  map.closePopup();
+  const pts = markers[i].map(r=>r.s.ll);
+  const hint = document.getElementById("map-hint");
+  if(pts.length){
+    map.flyToBounds(L.latLngBounds(pts), {padding:[36,36], maxZoom:15, duration:.7});
+    hint.textContent = "마커를 누르면 장소 정보가, 일정 항목을 누르면 지도가 그 장소로 이동합니다." + (L.Browser.mobile ? " 지도는 두 손가락으로 움직여요." : "");
+  } else {
+    map.flyTo([-33.8688,151.2093], 12, {duration:.7});
+    hint.textContent = "이 날은 이동만 있어요. 다른 날 탭을 눌러 장소를 확인하세요.";
+  }
+}
+function initMap(){
+  map = L.map("map", {scrollWheelZoom:false, dragging:!L.Browser.mobile, tap:false}).setView([-33.8688,151.2093], 12);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  markers = days.map((d,i)=>d.stops.filter(s=>s.ll).map(s=>{
+    const m = L.marker(s.ll, {icon:icon(s, i!==cur), title:s.n}).addTo(map)
+      .bindPopup(`<div class="pt">${d.tab} · ${s.t}</div><div class="pn">${s.n}</div><div class="pd">${s.d}</div>`);
+    m.on("click", ()=>{ if(i!==cur) show(i); });
+    return {s, m};
+  }));
+  focusDay(cur);
+}
+if(window.L) initMap(); else document.querySelector('script[src*="leaflet"]').addEventListener("load", initMap);
+show(cur);
 
 // countdown to 2026-10-22 22:00 KST
 const dep = new Date("2026-10-22T22:00:00+09:00").getTime();
