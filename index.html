@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시드니 4박 5일 · 2026.10.22 – 10.26</title>
+<style>
+  :root{
+    --ink:#0b1b2b; --sea:#0a6ea8; --sea2:#11a3c9; --sand:#f6efe4; --sun:#ff8a3d;
+    --card:#ffffff; --muted:#5b6b7b; --line:#e3e8ee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic",sans-serif;
+    background:var(--sand);color:var(--ink);line-height:1.6}
+  a{color:var(--sea)}
+  /* HERO */
+  .hero{position:relative;overflow:hidden;color:#fff;padding:72px 24px 120px;
+    background:linear-gradient(160deg,#08344f 0%,#0a6ea8 55%,#11a3c9 100%)}
+  .hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:2}
+  .eyebrow{letter-spacing:.2em;font-size:13px;font-weight:700;opacity:.85}
+  .hero h1{font-size:clamp(40px,8vw,84px);line-height:1.02;font-weight:900;margin:12px 0 16px;letter-spacing:-.02em}
+  .hero h1 span{color:var(--sun)}
+  .hero p{font-size:18px;opacity:.9;max-width:560px}
+  .count{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+  .count div{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);
+    border-radius:16px;padding:14px 18px;min-width:84px;text-align:center}
+  .count b{display:block;font-size:30px;font-variant-numeric:tabular-nums}
+  .count small{font-size:12px;opacity:.8}
+  .skyline{position:absolute;left:0;right:0;bottom:0;z-index:1;width:100%;height:auto}
+  .wave{animation:drift 9s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+  .sunball{animation:float 6s ease-in-out infinite alternate}
+  @keyframes float{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+
+  main{max-width:960px;margin:-60px auto 0;padding:0 20px 80px;position:relative;z-index:3}
+  section{margin-bottom:28px}
+  .card{background:var(--card);border-radius:22px;padding:28px;box-shadow:0 10px 30px rgba(11,27,43,.08)}
+  h2{font-size:24px;margin-bottom:16px;letter-spacing:-.01em}
+  h2 .tag{font-size:13px;font-weight:700;color:var(--sea);background:#e6f4fb;border-radius:999px;padding:3px 10px;margin-left:8px;vertical-align:middle}
+
+  /* quick facts */
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+  .fact{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(11,27,43,.08)}
+  .fact .k{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em}
+  .fact .v{font-size:18px;font-weight:800;margin-top:4px}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .tab{border:2px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-weight:800;
+    font-size:15px;cursor:pointer;transition:all .2s;color:var(--ink);font-family:inherit}
+  .tab:hover{border-color:var(--sea2);transform:translateY(-2px)}
+  .tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .day-title{font-size:20px;font-weight:900;margin-bottom:4px}
+  .day-sub{color:var(--muted);margin-bottom:18px}
+  .tl{list-style:none;position:relative;padding-left:26px}
+  .tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .tl li{position:relative;padding:0 0 20px;opacity:0;transform:translateY(8px);animation:in .4s forwards}
+  .tl li::before{content:"";position:absolute;left:-23px;top:6px;width:12px;height:12px;border-radius:50%;
+    background:#fff;border:3px solid var(--sea)}
+  .tl li.star::before{border-color:var(--sun);background:var(--sun)}
+  @keyframes in{to{opacity:1;transform:none}}
+  .tl .t{font-size:13px;font-weight:800;color:var(--sea)}
+  .tl .n{font-weight:800;font-size:17px}
+  .tl .d{color:var(--muted);font-size:15px}
+  .badge{display:inline-block;font-size:11px;font-weight:800;background:var(--sun);color:#fff;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+
+  /* highlight */
+  .hl{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.hl{grid-template-columns:1fr}}
+  .hl .card{position:relative;overflow:hidden}
+  .hl .card.pool{background:linear-gradient(150deg,#e6f7fc,#ffffff)}
+  .hl .card.art{background:linear-gradient(150deg,#fff1e6,#ffffff)}
+  .hl ul{padding-left:18px;margin-top:8px}
+  .hl li{margin-bottom:4px}
+
+  /* budget */
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-size:13px;color:var(--muted)}
+  tfoot td{font-weight:900;font-size:16px;border-bottom:none}
+  .col-mid{background:#f0f8fc}
+  .note{font-size:13px;color:var(--muted);margin-top:12px}
+
+  /* checklist */
+  .check{list-style:none}
+  .check li{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+  .check li:last-child{border-bottom:none}
+  .box{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;transition:all .2s}
+  .check li.done .box{background:var(--sea);border-color:var(--sea)}
+  .check li.done .box::after{content:"✓";color:#fff;font-weight:900;font-size:14px}
+  .check li.done span{text-decoration:line-through;color:var(--muted)}
+  .progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sea),var(--sea2));transition:width .3s}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">SEOUL → SYDNEY · 2026</div>
+    <h1>시드니<br><span>4박 5일</span></h1>
+    <p>10월 22일(목) 밤 출발 · 10월 26일(월) 정오 귀국<br>본다이 바다 수영장과 조각 전시, 항구, 블루마운틴까지.</p>
+    <div class="count" id="count">
+      <div><b id="cd-d">–</b><small>일</small></div>
+      <div><b id="cd-h">–</b><small>시간</small></div>
+      <div><b id="cd-m">–</b><small>분</small></div>
+      <div><b id="cd-s">–</b><small>초</small></div>
+    </div>
+  </div>
+  <svg class="skyline" viewBox="0 0 1200 180" preserveAspectRatio="none" aria-hidden="true">
+    <circle class="sunball" cx="1020" cy="50" r="34" fill="#ff8a3d" opacity=".9"/>
+    <!-- bridge -->
+    <path d="M40 120 Q 250 10 460 120" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="6"/>
+    <path d="M40 120 H460" stroke="rgba(255,255,255,.55)" stroke-width="5"/>
+    <g stroke="rgba(255,255,255,.35)" stroke-width="2">
+      <line x1="120" y1="72" x2="120" y2="120"/><line x1="190" y1="45" x2="190" y2="120"/>
+      <line x1="250" y1="38" x2="250" y2="120"/><line x1="310" y1="45" x2="310" y2="120"/>
+      <line x1="380" y1="72" x2="380" y2="120"/>
+    </g>
+    <rect x="30" y="92" width="22" height="30" fill="rgba(255,255,255,.55)"/>
+    <rect x="448" y="92" width="22" height="30" fill="rgba(255,255,255,.55)"/>
+    <!-- sails -->
+    <g fill="rgba(255,255,255,.85)">
+      <path d="M640 124 Q 660 60 700 50 Q 690 90 700 124 Z"/>
+      <path d="M690 124 Q 715 70 755 64 Q 742 98 752 124 Z"/>
+      <path d="M745 124 Q 768 84 800 80 Q 792 104 800 124 Z"/>
+      <rect x="620" y="122" width="200" height="8" rx="2"/>
+    </g>
+    <path class="wave" d="M-40 140 Q 60 120 160 140 T 360 140 T 560 140 T 760 140 T 960 140 T 1160 140 T 1360 140 V180 H-40Z" fill="#f6efe4"/>
+  </svg>
+</header>
+
+<main>
+  <section class="facts">
+    <div class="fact"><div class="k">✈️ 항공</div><div class="v">목 22:00 출발</div></div>
+    <div class="fact"><div class="k">🕑 시차</div><div class="v">한국 +2시간</div></div>
+    <div class="fact"><div class="k">🌤 날씨</div><div class="v">늦봄, 20도 초중반</div></div>
+    <div class="fact"><div class="k">🏨 숙박</div><div class="v">3박 (금·토·일)</div></div>
+  </section>
+
+  <section class="card">
+    <h2>일정표</h2>
+    <div class="tabs" id="tabs"></div>
+    <div id="day"></div>
+  </section>
+
+  <section class="hl">
+    <div class="card pool">
+      <h2>🏊 본다이 아이스버그 수영장</h2>
+      <p>바다 바로 옆 바위에 붙은 50m 바닷물 수영장. 금요일 오후, 한산한 평일에 방문.</p>
+      <ul>
+        <li>월~금 06:00–18:30 / 주말 06:30–18:30</li>
+        <li><b>매주 목요일 휴무</b>(청소)</li>
+        <li>성인 약 A$10, 사우나 포함 · 예약 불필요</li>
+        <li>수건·사물함 대여 각 A$5</li>
+        <li>난방 없는 바닷물이라 차가움 → 수영 후 사우나 필수</li>
+      </ul>
+    </div>
+    <div class="card art">
+      <h2>🗿 Sculpture by the Sea</h2>
+      <p>여행 기간 동안 본다이–타마라마 해안 산책로가 야외 조각 전시장이 돼요.</p>
+      <ul>
+        <li>2026.10.16 – 11.2 · 무료, 예약 불필요</li>
+        <li>약 2km 구간에 100여 점 전시</li>
+        <li>주말엔 매우 붐빔 → 평일 금요일에 관람</li>
+        <li>교통: T4 기차로 본다이 정션 → 버스</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>예상 경비 <span class="tag">1인 기준</span></h2>
+    <table>
+      <thead><tr><th>항목</th><th>알뜰</th><th class="col-mid">보통</th><th>여유</th></tr></thead>
+      <tbody>
+        <tr><td>항공권 (왕복)</td><td>85만</td><td class="col-mid">85만</td><td>85만</td></tr>
+        <tr><td>숙박 (3박)</td><td>44만</td><td class="col-mid">73만</td><td>110만</td></tr>
+        <tr><td>식비</td><td>21만</td><td class="col-mid">34만</td><td>53만</td></tr>
+        <tr><td>교통</td><td>8만</td><td class="col-mid">9만</td><td>12만</td></tr>
+        <tr><td>입장료·투어</td><td>3만</td><td class="col-mid">10만</td><td>19만</td></tr>
+        <tr><td>ETA·보험 등</td><td>5만</td><td class="col-mid">5만</td><td>5만</td></tr>
+      </tbody>
+      <tfoot><tr><td>합계</td><td>약 166만</td><td class="col-mid">약 216만</td><td>약 284만</td></tr></tfoot>
+    </table>
+    <p class="note">A$1 ≈ 970원 기준 추정치. 숙박·식비는 실제 예약가에 따라 달라질 수 있어요.</p>
+  </section>
+
+  <section class="card">
+    <h2>출발 전 체크리스트</h2>
+    <div class="progress"><i id="bar"></i></div>
+    <ul class="check" id="check"></ul>
+  </section>
+</main>
+
+<footer>Have a great trip to Sydney 🌊</footer>
+
+<script>
+const days = [
+  { tab:"목 10/22", title:"출발", sub:"인천 22:00 출발, 기내에서 푹 자기",
+    stops:[["22:00","인천공항 출발","밤 비행기, 도착까지 약 10시간"]]},
+  { tab:"금 10/23", title:"본다이 데이", sub:"도착하자마자 바다로. 평일이라 한산해요.",
+    stops:[
+      ["아침","시드니 공항 도착","기차로 시내 이동, 호텔에 짐 맡기기 (수영복만 챙기기)"],
+      ["점심","본다이 비치 이동 & 점심","T4 기차로 본다이 정션 → 버스, 해변 카페에서 점심"],
+      ["13:00–15:00","본다이 아이스버그 수영장","수영 후 사우나로 몸 녹이기",true],
+      ["15:00–17:00","조각 전시 해안 산책로","본다이 → 타마라마 전시 구간, 브론테까지 이어 걷기",true],
+      ["저녁","시내 복귀, 체크인 & 휴식","가볍게 저녁 먹고 일찍 쉬기"]]},
+  { tab:"토 10/24", title:"하버 데이", sub:"시드니의 상징들을 한 번에.",
+    stops:[
+      ["오전","서큘러 키 & 오페라하우스","항구 산책, 원하면 가이드 투어"],
+      ["오전","로열 보타닉 가든","미세스 맥쿼리스 체어에서 오페라하우스 + 하버브리지 한 컷"],
+      ["점심","더 록스","주말 마켓 구경하며 점심"],
+      ["오후","하버브리지 걷기","다리 위에서 오페라하우스 전망"],
+      ["저녁","달링하버","저녁 식사와 야경"]]},
+  { tab:"일 10/25", title:"블루마운틴", sub:"일요일은 대중교통 요금 상한이 낮아 기차비가 저렴해요.",
+    stops:[
+      ["아침","블루마운틴 당일치기","센트럴역에서 기차 약 2시간, 에코 포인트의 세 자매봉"],
+      ["오후","카툼바 & 루라 마을","짧은 트레킹, 카페 구경 후 기차로 복귀"],
+      ["저녁","서리 힐스 / 뉴타운","시드니 맛집 동네에서 마지막 저녁"]]},
+  { tab:"월 10/26", title:"귀국", sub:"정오 비행기, 아침은 여유 있게.",
+    stops:[
+      ["07:00–08:00","동네 카페에서 아침","플랫화이트 한 잔으로 마무리"],
+      ["09:00","공항 이동","늦어도 9시 반엔 공항 도착"],
+      ["12:00","시드니 출발","안녕, 시드니!"]]}
+];
+const tabs = document.getElementById("tabs"), day = document.getElementById("day");
+function show(i){
+  [...tabs.children].forEach((b,j)=>b.classList.toggle("on",i===j));
+  const d = days[i];
+  day.innerHTML = `<div class="day-title">${d.title}</div><div class="day-sub">${d.sub}</div>
+    <ul class="tl">${d.stops.map((s,k)=>`<li class="${s[3]?'star':''}" style="animation-delay:${k*70}ms">
+      <div class="t">${s[0]}</div><div class="n">${s[1]}${s[3]?'<span class="badge">하이라이트</span>':''}</div>
+      <div class="d">${s[2]}</div></li>`).join("")}</ul>`;
+}
+days.forEach((d,i)=>{const b=document.createElement("button");b.className="tab";b.textContent=d.tab;b.onclick=()=>show(i);tabs.appendChild(b);});
+show(1);
+
+// countdown to 2026-10-22 22:00 KST
+const dep = new Date("2026-10-22T22:00:00+09:00").getTime();
+function tick(){
+  let s = Math.max(0, Math.floor((dep - Date.now())/1000));
+  const pad=n=>String(n).padStart(2,"0");
+  document.getElementById("cd-d").textContent = Math.floor(s/86400);
+  document.getElementById("cd-h").textContent = pad(Math.floor(s%86400/3600));
+  document.getElementById("cd-m").textContent = pad(Math.floor(s%3600/60));
+  document.getElementById("cd-s").textContent = pad(s%60);
+}
+tick(); setInterval(tick,1000);
+
+// checklist (in-memory)
+const items = ["ETA(전자여행허가) 신청","호텔 3박 예약 (금·토·일)","여행자보험 가입","해외결제 되는 컨택리스 카드 준비",
+  "수영복 · 수건 · 편한 신발","가벼운 겉옷 (아침저녁 선선)","호주 전원 어댑터 (I타입)","선크림 · 선글라스"];
+const done = new Set();
+const ul = document.getElementById("check"), bar = document.getElementById("bar");
+function render(){
+  ul.innerHTML = items.map((t,i)=>`<li data-i="${i}" class="${done.has(i)?'done':''}"><div class="box"></div><span>${t}</span></li>`).join("");
+  bar.style.width = (done.size/items.length*100)+"%";
+}
+ul.onclick = e=>{const li=e.target.closest("li"); if(!li) return; const i=+li.dataset.i; done.has(i)?done.delete(i):done.add(i); render();};
+render();
+</script>
+</body>
+</html>
